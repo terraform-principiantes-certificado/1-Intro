@@ -5,7 +5,7 @@
 2. [ipos de IaC y sus diferentes usos](#schema2)
 3. [¿Qués es HCL?](#schema3)
 4. [Nuestro primer código](#schema4)
-5. [Multiple Providers y definicion de DRY](#schema5)
+5. [Multiple Providers y definicion de DRY (Don't Repeat Yourself)](#schema5)
 
 
 
@@ -130,7 +130,7 @@ terraform destroy
 
 <a name="schema5"></a>
 
-## 5. Multiple Providers y definicion de DRY
+## 5. Multiple Providers y definicion de DRY (Don't Repeat Yourself)
 
 1. Creamos carpeta de practica_2 y añadimos al código otro bloques de recursos
 ![Plan](./img/p2_plan.png)
@@ -175,6 +175,105 @@ terraform destroy
 
     Con este comando podemos ver los recursos que terraform ha creado
     ![Show](./img/p2_show.png)
+
+4. Dividir el código en dos archivos `local_file.tf`y `random.tf`. Cuando hacemos `terraform.apply` nos dice que todo sigue igual porque para terraform funciona indistintamente si los providers estan todos es un mismo archivo o en distintos. 
+5. Probamos a tener 5 archivos. Modificamos el archivo `local_file.tf` y hacemos `terraform.apply` 
+    ```
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    ``` 
+    Error por duplicidad del recurso `local_file`
+    ```bash
+    Error: Duplicate resource "local_file" configuration
+    ```
+    Hacemos cambio en el codigo
+    ```
+    resource "local_file" "productos-1" {
+    content = "Lista de productos para el mes proximo"
+    filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos-2" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos-3" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos-4" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    resource "local_file" "productos-5" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos-${random_string.sufijo.id}.txt" 
+    }
+    ```
+  Al hacer `terraform apply` solo nos ha creado un solo archivo `productos-cfqg.txt`. Porque estamos referenciando  un recurso `random_string` de cual solo tenemos uno. Solo tenemos un recurso y lo estamos usando en 5 archivo por lo tanto los 5 archivos se llaman igual y por eso solo vemos una.
+  ```bash
+  local_file.tf  productos-cfqg.txt  random.tf  terraform.tfstate  terraform.tfstate.backup
+  ```
+  Para poder ver 5 archivos hay que modificar el archivo `random.tf`
+  ```
+  resource "random_string" "sufijo-1" {
+  length           = 4
+  special          = false
+  upper = false
+  numeric = false
+  }
+  resource "random_string" "sufijo-2" {
+    length           = 4
+    special          = false
+    upper = false
+    numeric = false
+  }
+  resource "random_string" "sufijo-3" {
+    length           = 4
+    special          = false
+    upper = false
+    numeric = false
+  }
+  resource "random_string" "sufijo-4" {
+    length           = 4
+    special          = false
+    upper = false
+    numeric = false
+  }
+  resource "random_string" "sufijo-5" {
+    length           = 4
+    special          = false
+    upper = false
+    numeric = false
+  }
+  ```
+  Y actualizar las referencias en el  archivo `local_file.tf`
+  Ahora si tenemos los 5 archivos pero esta no es buena práctica. Porque estamos repitiendo mucho código.
+
+
+
+
+
+
+
+
 
   <hr>
 
