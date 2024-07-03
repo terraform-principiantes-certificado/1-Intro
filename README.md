@@ -5,6 +5,11 @@
 2. [ipos de IaC y sus diferentes usos](#schema2)
 3. [¿Qués es HCL?](#schema3)
 4. [Nuestro primer código](#schema4)
+5. [Multiple Providers y definicion de DRY](#schema5)
+
+
+
+[REF](#schemaref)
 
 <hr>
 
@@ -119,3 +124,60 @@ terraform apply
 terraform destroy
 ```
 ![Destroy](./img/destroy.png)
+
+
+  <hr>
+
+<a name="schema5"></a>
+
+## 5. Multiple Providers y definicion de DRY
+
+1. Creamos carpeta de practica_2 y añadimos al código otro bloques de recursos
+![Plan](./img/p2_plan.png)
+
+2. Nuevo provider `Random`: https://registry.terraform.io/providers/hashicorp/random/latest
+
+    Vamos a usar este: https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string
+    
+    ```
+    resource "local_file" "productos" {
+      content = "Lista de productos para el mes proximo"
+      filename = "productos.txt" #path donde se guarda el archivo cread
+    }
+
+    resource "random_string" "sufijo" {
+      length           = 4
+      special          = false
+      upper = false
+      numeric = false
+    }
+    ```
+    Si hacemos `terraform plan` nos da este error
+
+    ```bash
+    Error: Inconsistent dependency lock file
+    │ 
+    │ The following dependency selections recorded in the lock file are inconsistent with the current configuration:
+    │   - provider registry.terraform.io/hashicorp/random: required by this configuration but no version is selected
+    │ 
+    │ To update the locked dependency selections to match a changed configuration, run:
+    │   terraform init -upgrade
+
+    ```
+    Porque pasa esto, porque estamos trabajando con un nuevo provider y no hemos ejecutado `terraform init` para que terraform tenga en conocimiento los nuevos providers
+
+    Una vez hecho el `terraform apply` nos genera esto, el archivo `productos-rjjj.txt` que es lo que queríamos. El archivo producto son un sufijo.
+
+    ```bash
+    productos-rjjj.txt  terraform.tf  terraform.tfstate  terraform.tfstate.backup
+    ```
+3. `terraform show`
+
+    Con este comando podemos ver los recursos que terraform ha creado
+    ![Show](./img/p2_show.png)
+
+  <hr>
+
+<a name="schemaref"></a>
+
+REF: https://www.udemy.com/course/hashicorp-terraform/
