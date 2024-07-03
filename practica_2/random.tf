@@ -1,5 +1,5 @@
 resource "random_string" "sufijo" {
-  count = 5
+  count = 3
   length = 4
   special = false
   upper = false

@@ -227,46 +227,48 @@ terraform destroy
       filename = "productos-${random_string.sufijo.id}.txt" 
     }
     ```
-  Al hacer `terraform apply` solo nos ha creado un solo archivo `productos-cfqg.txt`. Porque estamos referenciando  un recurso `random_string` de cual solo tenemos uno. Solo tenemos un recurso y lo estamos usando en 5 archivo por lo tanto los 5 archivos se llaman igual y por eso solo vemos una.
-  ```bash
-  local_file.tf  productos-cfqg.txt  random.tf  terraform.tfstate  terraform.tfstate.backup
-  ```
-  Para poder ver 5 archivos hay que modificar el archivo `random.tf`
-  ```
-  resource "random_string" "sufijo-1" {
-  length           = 4
-  special          = false
-  upper = false
-  numeric = false
-  }
-  resource "random_string" "sufijo-2" {
-    length           = 4
-    special          = false
-    upper = false
-    numeric = false
-  }
-  resource "random_string" "sufijo-3" {
-    length           = 4
-    special          = false
-    upper = false
-    numeric = false
-  }
-  resource "random_string" "sufijo-4" {
-    length           = 4
-    special          = false
-    upper = false
-    numeric = false
-  }
-  resource "random_string" "sufijo-5" {
-    length           = 4
-    special          = false
-    upper = false
-    numeric = false
-  }
-  ```
-  Y actualizar las referencias en el  archivo `local_file.tf`
-  Ahora si tenemos los 5 archivos pero esta no es buena práctica. Porque estamos repitiendo mucho código.
+      Al hacer `terraform apply` solo nos ha creado un solo archivo `productos-cfqg.txt`. Porque estamos referenciando  un recurso `random_string` de cual solo tenemos uno. Solo tenemos un recurso y lo estamos usando en 5 archivo por lo tanto los 5 archivos se llaman igual y por eso solo vemos una.
+      ```bash
+      local_file.tf  productos-cfqg.txt  random.tf  terraform.tfstate  terraform.tfstate.backup
+      ```
+      Para poder ver 5 archivos hay que modificar el archivo `random.tf`
+      ```
+      resource "random_string" "sufijo-1" {
+      length           = 4
+      special          = false
+      upper = false
+      numeric = false
+      }
+      resource "random_string" "sufijo-2" {
+        length           = 4
+        special          = false
+        upper = false
+        numeric = false
+      }
+      resource "random_string" "sufijo-3" {
+        length           = 4
+        special          = false
+        upper = false
+        numeric = false
+      }
+      resource "random_string" "sufijo-4" {
+        length           = 4
+        special          = false
+        upper = false
+        numeric = false
+      }
+      resource "random_string" "sufijo-5" {
+        length           = 4
+        special          = false
+        upper = false
+        numeric = false
+      }
+      ```
+      Y actualizar las referencias en el  archivo `local_file.tf`
+      Ahora si tenemos los 5 archivos pero esta no es buena práctica. Porque estamos repitiendo mucho código.
+
 6. Probando a no repetir código. Vamos a usar una clausula especial`count`. Con los cambio necesarios tenemos los 5 archivos creados correctamente.
+    ![Show](./img/p2_show_2.png)
   
 
 
