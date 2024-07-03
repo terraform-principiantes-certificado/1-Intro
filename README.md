@@ -266,9 +266,8 @@ terraform destroy
   ```
   Y actualizar las referencias en el  archivo `local_file.tf`
   Ahora si tenemos los 5 archivos pero esta no es buena práctica. Porque estamos repitiendo mucho código.
-
-
-
+6. Probando a no repetir código. Vamos a usar una clausula especial`count`. Con los cambio necesarios tenemos los 5 archivos creados correctamente.
+  
 
 
 
