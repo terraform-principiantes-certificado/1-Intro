@@ -6,6 +6,9 @@
 3. [¿Qués es HCL?](#schema3)
 4. [Nuestro primer código](#schema4)
 5. [Multiple Providers y definicion de DRY (Don't Repeat Yourself)](#schema5)
+6. [Despliegue en AWS](#schema6)
+7. [Como guardar y usar un plan](#schema7)
+8. [Terraform FMT & Terraform Validate](#schema8)
 
 
 
@@ -270,6 +273,117 @@ terraform destroy
 6. Probando a no repetir código. Vamos a usar una clausula especial`count`. Con los cambio necesarios tenemos los 5 archivos creados correctamente.
     ![Show](./img/p2_show_2.png)
   
+
+
+  <hr>
+
+<a name="schema6"></a>
+
+## 6. Despliegue en AWS
+
+### **Crear un bucket S3**
+Documentación:
+
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket
+
+```python
+resource "aws_s3_bucket" "proveedores" {
+  bucket = "proveedores_regional_patri"
+}
+```
+1. `terraform init`
+2. `terraform plan`
+3. `terraform apply`
+
+![S3](./img/s3_aws.png)
+
+4. `terraform destroy`
+
+### **Crear bucket S3 para crear buckets únicos usando el recurso random_string**
+
+Vamos a crear dos buckets:
+
+```python
+resource "aws_s3_bucket" "proveedores" {
+  count = 2
+  bucket = "proveedores-${random_string.sufijo[count.index].id}"
+}
+
+
+resource "random_string" "sufijo" {
+  count  = 2 
+  length = 8
+  special = false
+  upper = false
+  numeric = false
+}
+```
+1. `terraform init`, porque hemos añadido un recurso nuevo a nuestro documento, `random_string`
+2. `terraform plan`
+3. `terraform apply`
+
+![S3](./img/s3_aws_2.png)
+
+
+### **Añadir `tags` al bucket**
+```python
+resource "aws_s3_bucket" "proveedores" {
+  count = 2
+  bucket = "proveedores-${random_string.sufijo[count.index].id}"
+   tags = {
+    Owner       = "Patri"
+    Environment = "Dev"
+    Office = "proveedores"
+  }
+}
+
+
+resource "random_string" "sufijo" {
+  count  = 2 
+  length = 8
+  special = false
+  upper = false
+  numeric = false
+}
+```
+1. `terraform plan`
+2. `terraform apply`
+
+
+![Tags](./img/tags.png)
+
+
+
+3. `terraform destroy`
+
+
+  <hr>
+
+<a name="schema7"></a>
+
+
+## 7. Como guardar y usar un plan
+
+Para tener una copia del plan, aunque alguien modifique a posteriori los recursos de nuestro archivo.
+
+
+1. `terraform plan -out s3.plan`
+2. `terraform apply "s3.plan"`
+3. `terraform destroy`
+
+
+<a name="schema8"></a>
+
+## 8. Terraform FMT & Terraform Validate
+
+
+
+
+
+
+
+
 
 
 
