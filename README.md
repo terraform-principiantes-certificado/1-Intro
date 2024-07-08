@@ -9,6 +9,7 @@
 6. [Despliegue en AWS](#schema6)
 7. [Como guardar y usar un plan](#schema7)
 8. [Terraform FMT & Terraform Validate](#schema8)
+9. [Restringir las versiones (Constraints) de Terraform & Providers](#schema9)
 
 
 
@@ -372,20 +373,55 @@ Para tener una copia del plan, aunque alguien modifique a posteriori los recurso
 2. `terraform apply "s3.plan"`
 3. `terraform destroy`
 
+  <hr>
 
 <a name="schema8"></a>
 
 ## 8. Terraform FMT & Terraform Validate
 
+### **`terraform ftm`**
+1. `terraform fmt`: formatea el archivo tf. Te formate todos los archivos `.tf` que tengas en la carpeta en la que estas ejecutandose el comando.
+
+2. `terraform fmt terraform.tf`: Solo formatea ese archivo `terraform.tf`
+
+### **`terraform validate`**
+1. `terraform validate` : valida que la sintaxis que tenemos en nuestros archivos sean los correctos. Valida todos los archivos de la carpeta.
+También podemos hacer `terraform plan`y nos diría si tenemos algo no correcto, pero con la diferencia que tendríamos que esperar que se genere todo el plan para que nos dira los fallos, en cambio el validate es mucho más rápido porque no genera el plan. 
 
 
+  <hr>
+  
+<a name="schema9"></a>
 
 
+## 9. Restringir las versiones (Constraints) de Terraform & Providers
 
+![Restringir](./img/restringir.png)
 
+[DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
 
+Ejemplo:
 
+```python
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
 
+# Configure the AWS Provider
+provider "aws" {
+  region = "us-east-1"
+}
+
+# Create a VPC
+resource "aws_vpc" "example" {
+  cidr_block = "10.0.0.0/16"
+}
+```
 
 
 
