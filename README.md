@@ -423,6 +423,74 @@ resource "aws_vpc" "example" {
 }
 ```
 
+### **Crear Restricciones con las versiones de terrafor y de aws**
+
+[Codigo](./practica_4/)
+1. Creamos archivo `providers.tf` que contiene las restricciones para esta prueba.
+2. `terraform init`
+
+    Al poner `required_version = "1.2.0" # version requerida de terraform` nos da un error porque nosotros tenemo versiones distintas.
+    ![Version](./img/version_tf.png)
+    ![Error](./img/version_tf_error.png)
+    Para solucionarlo una de las opciones es poner la version que tenemos `required_version = "1.9.0" ` y la otra es `required_version = "~>1.9.0"` que indica que cualquier version igual o inferior es válida.
+
+### **Crear VPC**
+[DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/vpc)
+1. Creams el archivo `vpc.tf`
+2. `terraform plan`
+3. `terraform apply`
+
+![VPC](./img/vpc.png)
+
+### **Crear VPC en distintas regiones
+1. Añadimos en `vpc.tf`
+```python
+resource "aws_vpc" "vpc_ohio" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "VPC-OHIO"
+    env = "Dev"
+  }
+}
+```
+Pero si dejamos esto así nos va a desplegar otra vpc con ese nombre no en otra region, por lo tanto hay que modificar el archivo `providers.tf`
+
+Añadiendo este código y poniendo un alias a esa región. Ahora le decimos al recurso cual de las dos regiones tiene que coger.
+```python
+provider "aws" {
+  # Configuration options
+  region = "us-east-2"
+  alias = "ohio"
+}
+```
+`vpc.tf`
+```python
+resource "aws_vpc" "vpc_ohio" {
+  cidr_block = "10.0.0.0/16"
+  tags = {
+    Name = "VPC-OHIO"
+    env = "Dev"
+  }
+  provider = aws.ohio
+}
+```
+![VPC](./img/vpc_region.png)
+
+
+4. `terraform destroy`
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
