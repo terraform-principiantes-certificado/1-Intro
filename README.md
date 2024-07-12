@@ -10,6 +10,7 @@
 7. [Como guardar y usar un plan](#schema7)
 8. [Terraform FMT & Terraform Validate](#schema8)
 9. [Restringir las versiones (Constraints) de Terraform & Providers](#schema9)
+10. [Uso de Variables en Terraform](#schema100)
 
 
 
@@ -479,18 +480,72 @@ resource "aws_vpc" "vpc_ohio" {
 
 4. `terraform destroy`
 
+  <hr>
+  
+<a name="schema10"></a>
+
+## 10. Uso de Variables en Terraform
+
+![Variables](./img/var.png)
 
 
+### **Asignando valores a las variables**
 
+[Codigo](./practica_5/)
 
+Vamos a ver varias opciones:
 
+1. Modificar el archivo `vpc.tf` añadiendo el apartado de variables.
+2. Hacemos una prueba donde dejamos el codigo sin default
+    ```python
+    variable "ohio_cidr" {
+    }
+    ```
+    Cuando ejecutamos `terraform.plan` en ese momento nos pide el valor de esa varible.
 
+    ![Var](./img/var_2.png)
 
+3. Con variables de entorno.
 
+    Definimos variables de entorno. 
+    ```bash 
+    export TF_VAR_virginia_cidr="10.0.0.0/16"
+    ```
+    Podemos ver las variables de entorno con el comando `env | grep TF`
+    ![ENV](./img/var_env.png)
 
+    Borrar variables de entornos
 
+    ```bash
+    unset TF_VAR_virginia_cidr
+    ```
 
+4. Otra forma de añadir las variables es cuando ejecutamos el `terraform plan` o el `terraform apply`.
 
+    -  `terraform plan -var ohio_cdir="10.0.0.0/16"`, poco práctica al tener que meter todas las variables a manos,
+
+5. Archico `.tfvars` la mas recomendada.
+    - Creamos el archivo `variables.tf` y copiamos el codigo de las variables que teníamos en `vpc.tf`. Solo ponemos la difinición de las variables no el contenido.
+    ```
+    variable "virginia_cidr" {
+    }
+    variable "ohio_cidr" {
+    }
+    ``` 
+    - El contenido va en otro archivo llamado `terraform.tfvars`. Al llamarse así se carga automaticamente al hacer un plan.
+    ```
+    virginia_cidr = "10.0.0.0/16"
+
+    ohio_cidr = "10.0.0.0/16"
+    ```
+
+    ![tfvars](./img/var_3.png)
+
+    - El archivo no puede tener cualquier nombre. 
+    ![tfvars](./img/var_4.png)
+
+6. Prioridades en la definición de variables
+    ![Prioridades](./img/var_5.png)
 
 
 
