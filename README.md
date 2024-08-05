@@ -696,7 +696,7 @@ sensitive = true
 ```
 ![True](./img/sensitive_t.jpg)
 
-
+[DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
 
 
 
