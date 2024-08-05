@@ -684,19 +684,62 @@ En el apartado Attribute Reference de la documentación del recurso podemos ver 
 
 
 
-![Ejemplo practica variables](/practica_6/)
+## [Ejemplo practica variables](/practica_6/)
 
 ```
 sensitive = false
 ```
 ![False](./img/sensitive_f.jpg)
 
-````
+```
 sensitive = true
 ```
+
 ![True](./img/sensitive_t.jpg)
 
-[DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
+[DOC AWS_SUBNET](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet)
+
+
+## [Practica de Outputs](/practica_6/)
+
+[DOC AWS_INSTACES](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/instance)
+
+
+Vamos a crear unas instacias EC2 en la subnet publica.
+
+```
+resource "aws_instance" "this" {
+  ami                     = "ami-0dcc1e21636832c5d"
+  instance_type           = "m5.large"
+  host_resource_group_arn = "arn:aws:resource-groups:us-west-2:012345678901:group/win-testhost"
+  tenancy                 = "host"
+}
+```
+Como vemos en el ejemplo anterior necesitamos conocer el `ami` o `Amazon Machine Image` de la instancia EC2 que vamos a crear, por lo tanto vamos a hacer una prueba de creación en la consola de Amazon para ver ese `ami`.
+![AMI](./img/ami.jpg)
+
+![Public ip](./img/public_ip.jpg)
+![Public ip](./img/public_ip_2.jpg)
+
+Para poder obtener los outputs también podemos ejecutar el siguiente comando:
+```
+terraform output
+```
+Y nos muestran todos los outputs que tenemos, pero si nos sabemos el nombre podemos usar:
+```
+terraform output ec2_public_ip
+```
+Y los más importante como ya hemos terminado nuestra práctica, hay que destruir los recursos creados con:
+
+```
+terraform destroy
+``` 
+
+
+
+
+
+
 
 
 
