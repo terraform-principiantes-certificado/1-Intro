@@ -11,6 +11,8 @@
 8. [Terraform FMT & Terraform Validate](#schema8)
 9. [Restringir las versiones (Constraints) de Terraform & Providers](#schema9)
 10. [Uso de Variables en Terraform](#schema100)
+11. [Tipos de variables en Terraform](#schema11)
+12. [Outputs](#schema12)
 
 
 
@@ -546,6 +548,145 @@ Vamos a ver varias opciones:
 
 6. Prioridades en la definición de variables
     ![Prioridades](./img/var_5.png)
+
+
+
+  <hr>
+  
+<a name="schema11"></a>
+
+## 11. Tipos de variables en Terraform
+
+### Arguments
+Terraform CLI defines the following optional arguments for variable declarations:
+
+- default - A default value which then makes the variable optional.
+- type - This argument specifies what value types are accepted for the variable.
+- description - This specifies the input variable's documentation.
+- validation - A block to define validation rules, usually in addition to type constraints.
+- sensitive - Limits Terraform UI output when the variable is used in configuration.
+- nullable - Specify if the variable can be null within the module.
+### Type:
+
+- Cadena (String):
+
+  Almacena datos de texto.
+    
+  Ejemplo: "example"
+- Número (Number):
+
+  Almacena datos numéricos, pueden ser enteros o de punto flotante.
+
+  Ejemplo: 42, 3.14
+- Booleano (Boolean):
+
+  Almacena valores de verdad, true o false.
+
+  Ejemplo: true
+
+- Lista (List):
+
+  Almacena una colección ordenada de valores del mismo tipo.
+
+  Ejemplo: ["apple", "banana", "cherry"]
+
+- Mapa (Map):
+
+  Almacena un conjunto de pares clave-valor donde tanto las claves como los valores son del mismo tipo.
+
+  Ejemplo: { "name" = "John", "age" = 30 }
+
+- Conjunto (Set):
+
+  Almacena una colección no ordenada de valores únicos del mismo tipo. No podemos acceder a elementos puntuales.
+
+  Ejemplo: ["one", "two", "three"] (similar a lista pero sin duplicados)
+
+  ```
+  variable "instance_names" {
+  type    = set(string)
+  default = ["web1", "web2", "web3"]
+  }
+  ```
+  Usando for_each podemos acceder a cada elemento del set
+
+  ```
+  provider "aws" {
+  region = "us-west-2"
+  }
+
+  resource "aws_instance" "example" {
+  for_each = var.instance_names
+
+  ami           = "ami-0c55b159cbfafe1f0" # Reemplaza con una AMI válida en tu región
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = each.key
+  }
+  }
+
+  output "instance_ids" {
+  value = [for instance in aws_instance.example : instance.id]
+  }
+  ```
+- Objeto (Object):
+
+  Almacena una colección de pares clave-valor donde los valores pueden ser de diferentes tipos.
+
+  Ejemplo: { name = "John", age = 30, is_active = true }
+
+- Tuppla (Tuple):
+
+  Almacena una colección ordenada de valores de diferentes tipos.
+  
+  Ejemplo: ["apple", 2, true]
+
+
+- Nulo (Null):
+
+  Representa un valor vacío o no asignado.
+
+  Ejemplo: null
+
+
+  <hr>
+  
+<a name="schema12"></a>
+
+## 12. Outputs
+
+Las variables de salida permiten a los usuarios extraer datos de los recursos gestionados por Terraform y utilizarlos en otras partes de su configuración o mostrarlos al final de la ejecución. Los outputs son especialmente útiles para compartir información entre diferentes módulos de Terraform o para proporcionar detalles importantes que pueden necesitarse para otras operaciones manuales o automáticas.
+
+### Definición de un Output
+Un bloque de salida se define utilizando la palabra clave output. Aquí hay un ejemplo básico:
+
+```hcl
+output "instance_ip" {
+  description = "The public IP address of the instance"
+  value       = aws_instance.my_instance.public_ip
+}
+```
+
+### Componentes de un Output
+- Nombre del Output: `instance_ip` en este caso, es el nombre de la salida. Este nombre se utilizará para referenciar la salida en otras configuraciones de Terraform o en la salida de la terminal.
+
+- Descripción (opcional): `description` proporciona una breve descripción del valor de salida, lo que es útil para documentación y mantenimiento.
+
+- Valor: value es el valor que será exportado. Puede ser una referencia directa a un atributo de un recurso, una expresión, o cualquier otro valor derivado de la configuración de Terraform.
+
+
+### Attribute Reference
+
+En el apartado Attribute Reference de la documentación del recurso podemos ver todos los atributos que tenemos para añadir como argumentos.
+
+![Attribute](./img/attributes.jpg)
+
+
+
+
+
+
 
 
 
