@@ -3,11 +3,17 @@ variable "virginia_cidr" {
     type = string
     ## sensitive = true
 }
-variable "public_subnet" {
-    description = "CDIR public subnet"
-    type = string
-}
-variable "privade_subnet" {
-  description = "CDIR privade subnet"
-  type = string
+# variable "public_subnet" {
+#     description = "CDIR public subnet"
+#     type = string
+# }
+# variable "privade_subnet" {
+#   description = "CDIR privade subnet"
+#   type = string
+# }
+
+variable "subnets" {
+  description = "Lista de subnets"
+  type = list(string)
+  
 }
