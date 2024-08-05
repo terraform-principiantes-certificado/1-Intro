@@ -684,7 +684,17 @@ En el apartado Attribute Reference de la documentación del recurso podemos ver 
 
 
 
+![Ejemplo practica variables](/practica_6/)
 
+```
+sensitive = false
+```
+![False](./img/sensitive_f.jpg)
+
+````
+sensitive = true
+```
+![True](./img/sensitive_t.jpg)
 
 
 
