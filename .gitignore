@@ -4,3 +4,4 @@ terraform.tfstate.*
 terraform.tfstate
 *.txt
 .DS_Store
+*.pem

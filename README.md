@@ -15,6 +15,7 @@
 12. [Outputs](#schema12)
 13. [Dependencias entre recursos](#schema13)
 14. [Target Resources](#schema14)
+15. [Bloques "Data" en Terraform](#schema15)
 
 
 
@@ -814,6 +815,43 @@ depends_on = [ aws_subnet.public_subnet ]
 Ejecutamos: `terraform plan` y `terraform apply`
 
 Ya tenemos desplegados todos los recursos, pero vamos a hacer unos cambios en los nombres de las  vpc. Ahora el terraform plan nos dice que tenemos dos cambios por hacer. Pero solo queremos realizar uno. Entonces usamos `terraform apply --target nombre_recurso` y solo se aplicaran los cambios en el recurso que hayamos puesto.
+
+
+Y los más importante como ya hemos terminado nuestra práctica, hay que destruir los recursos creados con:
+
+```
+terraform destroy
+``` 
+
+  <hr>
+  
+<a name="schema15"></a>
+
+## 15. Bloques "Data" en Terraform
+
+En Terraform, los bloques de datos (`data blocks`) se utilizan para acceder a información externa o existente sin crear nuevos recursos. Estos bloques permiten consultar datos de proveedores y utilizar esa información dentro de la configuración de Terraform. Los bloques de datos son útiles para obtener detalles sobre recursos que ya existen en la infraestructura, tales como AMIs de AWS, subredes, grupos de seguridad, y más.
+
+En este caso vamos a trabajar con las key de EC2
+![Key EC2](./img/key_ec2.jpg)
+
+[Código](/practica_6/)
+
+- Creamos nuestra Key, en el apartado Key pair de las instancia EC2. Y la guardamos, porque no hay manera de volver a descargar esa Key. 
+La llave que queda en Amazon en es la Key pública y la que nos hemos descargado es la privada.
+
+- Ahora vamos a leer esa key pública que están en amazon en nuestro recurso de terraform.
+- Creamos un nuevo archivo, llamado `data.tf` y añadimos al archivo `ec2.tf` esta línea:
+```
+key_name = data.aws_key_pair.key.key_name
+```
+- Ejecutamos `terraform plan`
+
+![Key](./img/key_ec2_2.jpg)
+
+- Ejecutamos `terraform destroy`
+
+[DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair)
+
 
 
 
