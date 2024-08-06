@@ -10,9 +10,11 @@
 7. [Como guardar y usar un plan](#schema7)
 8. [Terraform FMT & Terraform Validate](#schema8)
 9. [Restringir las versiones (Constraints) de Terraform & Providers](#schema9)
-10. [Uso de Variables en Terraform](#schema100)
+10. [Uso de Variables en Terraform](#schema10)
 11. [Tipos de variables en Terraform](#schema11)
 12. [Outputs](#schema12)
+13. [Dependencias entre recursos](#schema13)
+14. [Target Resources](#schema14)
 
 
 
@@ -736,8 +738,82 @@ terraform destroy
 ``` 
 
 
+  <hr>
+  
+<a name="schema13"></a>
 
 
+## 13. Dependencias entre recursos
+
+En Terraform, las dependencias entre recursos son importantes para asegurar que los recursos se creen, actualicen o eliminen en el orden correcto. Terraform maneja estas dependencias de dos maneras: dependencias implícitas y dependencias explícitas.
+
+### Dependencias Implícitas
+Las dependencias implícitas son aquellas que Terraform infiere automáticamente a partir de las referencias entre recursos. Cuando un recurso hace referencia a otro recurso o a sus atributos, Terraform entiende que hay una dependencia y garantiza que los recursos se manejen en el orden correcto.
+
+Ejemplo de Dependencia Implícita:
+
+```hcl
+resource "aws_vpc" "example_vpc" {
+  cidr_block = "10.0.0.0/16"
+}
+
+resource "aws_subnet" "example_subnet" {
+  vpc_id     = aws_vpc.example_vpc.id
+  cidr_block = "10.0.1.0/24"
+}
+``` 
+En este ejemplo, `aws_subnet.example_subnet` depende de `aws_vpc.example_vpc` porque usa `aws_vpc.example_vpc.id` como el ID de la VPC. Terraform automáticamente entiende que la **VPC** debe crearse **antes** de la **subred** debido a esta referencia.
+
+
+### Dependencias Explícitas
+Las dependencias explícitas se declaran utilizando el argumento `depends_on`. Este método se usa cuando no hay una referencia directa entre los recursos pero aún se necesita asegurar un orden específico en la creación, actualización o eliminación de los recursos.
+
+Ejemplo de Dependencia Explícita:
+
+```hcl
+resource "aws_instance" "example_instance" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = "t2.micro"
+}
+
+resource "aws_eip" "example_eip" {
+  depends_on = [aws_instance.example_instance]
+
+  instance = aws_instance.example_instance.id
+  vpc      = true
+}
+```
+En este ejemplo, `aws_eip.example_eip` depende explícitamente de `aws_instance`.example_instance debido al uso de `depends_on`. Aunque hay una referencia directa a `aws_instance.example_instance.id`, **depends_on** asegura que la instancia se cree completamente antes de que se asigne la EIP.
+
+### Comparación y Uso
+#### Uso de Dependencias Implícitas:
+
+- Simplicidad: Son automáticas y no requieren configuración adicional.
+- Legibilidad: El código es más limpio y más fácil de mantener.
+- Recomendadas para la mayoría de los casos donde una referencia directa existe entre recursos.
+
+#### Uso de Dependencias Explícitas:
+
+- Control: Proporcionan un control explícito sobre el orden de los recursos.
+- Necesarias cuando no hay referencias directas pero el orden es crucial.
+- Útiles en casos complejos donde los recursos deben gestionarse en un orden específico debido a requisitos externos o comportamientos específicos de los proveedores de servicios.
+
+  <hr>
+  
+<a name="schema14"></a>
+
+## 14. Target Resources
+
+Lo vamos a ver con un ejemplo
+
+[Target Resources](/practica_6/)
+Añadimos esto:
+```
+depends_on = [ aws_subnet.public_subnet ]
+```
+Ejecutamos: `terraform plan` y `terraform apply`
+
+Ya tenemos desplegados todos los recursos, pero vamos a hacer unos cambios en los nombres de las  vpc. Ahora el terraform plan nos dice que tenemos dos cambios por hacer. Pero solo queremos realizar uno. Entonces usamos `terraform apply --target nombre_recurso` y solo se aplicaran los cambios en el recurso que hayamos puesto.
 
 
 
