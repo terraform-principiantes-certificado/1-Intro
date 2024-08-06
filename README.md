@@ -16,6 +16,7 @@
 13. [Dependencias entre recursos](#schema13)
 14. [Target Resources](#schema14)
 15. [Bloques "Data" en Terraform](#schema15)
+16. [Diagramas de infraestructura](#schema16)
 
 
 
@@ -853,8 +854,30 @@ key_name = data.aws_key_pair.key.key_name
 [DOC](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair)
 
 
+  <hr>
+  
+<a name="schema16"></a>
+
+## 16. Diagramas de infraestructura
+
+Crear diagramas de infraestructura es una práctica esencial en la gestión de infraestructuras de TI. Estos diagramas ayudan a visualizar la arquitectura, entender las relaciones entre componentes y facilitar la comunicación entre equipos. Para Terraform, los diagramas de infraestructura pueden ilustrar cómo los recursos definidos en los archivos de configuración están organizados y conectados.
 
 
+### Ejemplo Visual con Draw.io
+
+[Draw.io](https://app.diagrams.net/)
+
+- Agregar Componentes:
+
+    Agrega cajas para cada recurso (aws_vpc, aws_subnet, aws_instance).
+- Conectar Componentes:
+    
+    Dibuja líneas desde aws_vpc a aws_subnet y de aws_subnet a aws_instance.
+- Etiquetas y Detalles:
+
+  Etiqueta cada componente con su nombre y cualquier detalle relevante (CIDR block, AMI ID, etc.).
+
+![IAC](./img/IAC_estructura.png)
 
 
   <hr>
